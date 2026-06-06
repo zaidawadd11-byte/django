@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الوراثة في جافا - شرح احترافي | Java Inheritance</title>
+<style>
+  :root {
+    --bg: #0f1226;
+    --bg2: #171a35;
+    --card: #1e2244;
+    --card2: #252a52;
+    --primary: #7c5cff;
+    --primary-light: #a48bff;
+    --accent: #2dd4bf;
+    --accent2: #fbbf24;
+    --danger: #f87171;
+    --success: #34d399;
+    --text: #e6e8f0;
+    --muted: #9aa0c0;
+    --border: #32386b;
+    --code-bg: #11142b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, 'Arial', sans-serif;
+    background: linear-gradient(160deg, var(--bg), var(--bg2));
+    color: var(--text);
+    line-height: 1.9;
+    padding-bottom: 60px;
+  }
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #7c5cff 0%, #2dd4bf 100%);
+    padding: 60px 20px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: "{ }";
+    position: absolute;
+    font-size: 320px;
+    font-weight: 800;
+    opacity: 0.08;
+    top: -40px;
+    left: 5%;
+    color: #fff;
+  }
+  header h1 {
+    font-size: 2.8rem;
+    color: #fff;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 1;
+  }
+  header .sub {
+    color: #f0f0ff;
+    font-size: 1.2rem;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    padding: 6px 18px;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    position: relative;
+    z-index: 1;
+  }
+  /* ===== LAYOUT ===== */
+  .container {
+    max-width: 1000px;
+    margin: -50px auto 0;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+  }
+  /* ===== TOC ===== */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 26px 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .toc h2 { color: var(--primary-light); margin-bottom: 16px; font-size: 1.3rem; }
+  .toc ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    display: block;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .toc a:hover { background: var(--card2); border-color: var(--primary); color: var(--primary-light); transform: translateX(-4px); }
+  /* ===== SECTIONS ===== */
+  section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 30px 34px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    scroll-margin-top: 20px;
+  }
+  section h2 {
+    color: var(--primary-light);
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section h2 .icon {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  section h3 { color: var(--accent); font-size: 1.2rem; margin: 22px 0 12px; }
+  p { margin-bottom: 14px; color: var(--text); }
+  .muted { color: var(--muted); }
+  strong { color: var(--accent2); }
+  /* ===== KEYWORD HIGHLIGHT ===== */
+  .kw {
+    background: rgba(124,92,255,0.18);
+    color: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    border: 1px solid rgba(124,92,255,0.3);
+  }
+  /* ===== CALLOUTS ===== */
+  .note, .warning, .tip {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 18px 0;
+    border-right: 5px solid;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .note { background: rgba(45,212,191,0.1); border-color: var(--accent); }
+  .warning { background: rgba(248,113,113,0.1); border-color: var(--danger); }
+  .tip { background: rgba(251,191,36,0.1); border-color: var(--accent2); }
+  .note .emoji, .warning .emoji, .tip .emoji { font-size: 1.5rem; flex-shrink: 0; }
+  /* ===== CODE ===== */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+    direction: ltr;
+    text-align: left;
+    position: relative;
+  }
+  pre code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #e6e8f0;
+  }
+  .c-key { color: #ff7edb; font-weight: 600; }
+  .c-type { color: #36c5f0; }
+  .c-str { color: #9cff8f; }
+  .c-com { color: #6b7394; font-style: italic; }
+  .c-fn { color: #fbbf24; }
+  .c-num { color: #f78c6c; }
+  pre .label {
+    position: absolute;
+    top: 0; left: 0;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 3px 12px;
+    border-radius: 0 0 8px 0;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .output {
+    background: #0a0c1a;
+    border-right: 4px solid var(--success);
+  }
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 0.95rem;
+  }
+  th, td { padding: 12px 16px; text-align: center; border: 1px solid var(--border); }
+  th { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; }
+  tr:nth-child(even) td { background: var(--card2); }
+  tr:nth-child(odd) td { background: var(--card); }
+  .yes { color: var(--success); font-weight: bold; }
+  .no { color: var(--danger); font-weight: bold; }
+  /* ===== DIAGRAM ===== */
+  .diagram { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 24px 0; }
+  .node {
+    background: linear-gradient(135deg, var(--card2), var(--card));
+    border: 2px solid var(--primary);
+    border-radius: 14px;
+    padding: 14px 22px;
+    min-width: 220px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(124,92,255,0.25);
+  }
+  .node.root { border-color: var(--accent); box-shadow: 0 6px 20px rgba(45,212,191,0.25); }
+  .node .title { font-weight: 700; font-size: 1.1rem; color: var(--primary-light); }
+  .node.root .title { color: var(--accent); }
+  .node .attrs { font-size: 0.82rem; color: var(--muted); margin-top: 6px; direction: ltr; font-family: monospace; }
+  .arrow {
+    color: var(--accent2);
+    font-size: 1.6rem;
+    height: 36px;
+    display: flex;
+    align-items: center;
+  }
+  .arrow .lbl { font-size: 0.75rem; color: var(--accent2); margin-right: 8px; font-family: monospace; }
+  .branches { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+  /* ===== FOOTER ===== */
+  footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 30px 20px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  footer .ref { font-size: 0.85rem; margin-top: 8px; }
+  @media (max-width: 700px) {
+    header h1 { font-size: 1.9rem; }
+    .toc ul { grid-template-columns: 1fr; }
+    section { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧬 الوراثة في جافا</h1>
+  <div class="sub">Inheritance in Java — شرح احترافي شامل</div>
+  <div class="badge">Fundamental Programming in JAVA · Applied Science Private University</div>
+</header>
+
+<div class="container">
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc">
+    <h2>📑 محتويات الدرس</h2>
+    <ul>
+      <li><a href="#what">1. ما هي الوراثة؟</a></li>
+      <li><a href="#terms">2. المصطلحات الأساسية</a></li>
+      <li><a href="#types">3. أنواع الوراثة</a></li>
+      <li><a href="#benefits">4. فوائد الوراثة</a></li>
+      <li><a href="#extends">5. الكلمة extends</a></li>
+      <li><a href="#example">6. مثال Shape و Rectangle</a></li>
+      <li><a href="#constructors">7. الوراثة والبناة</a></li>
+      <li><a href="#super">8. الكلمة super</a></li>
+      <li><a href="#chaining">9. تسلسل البناة</a></li>
+      <li><a href="#protected">10. معامل protected</a></li>
+      <li><a href="#override">11. Override و Overload</a></li>
+      <li><a href="#object">12. كلاس Object ودواله</a></li>
+      <li><a href="#final">13. معامل final</a></li>
+      <li><a href="#exercise">14. التمرين العملي</a></li>
+    </ul>
+  </nav>
+
+  <!-- 1. WHAT IS INHERITANCE -->
+  <section id="what">
+    <h2><span class="icon">📚</span> ما هي الوراثة؟</h2>
+    <p>الوراثة هي مفهوم يسمح للكلاس بأن <strong>يكتسب الخصائص والدوال</strong> من كلاس آخر موجود مسبقاً، بدلاً من كتابة الكود من الصفر.</p>
+    <div class="tip">
+      <span class="emoji">💡</span>
+      <div>الفائدة الكبرى: <strong>توفير الوقت</strong> وإعادة استخدام كود مجرّب وخالٍ من الأخطاء، مما يرفع جودة البرنامج وكفاءته.</div>
+    </div>
+    <p>عند إنشاء كلاس جديد، بدل التصريح بأعضاء جديدة بالكامل، يمكنك جعل الكلاس الجديد <strong>يرث الأعضاء</strong> من كلاس موجود.</p>
+  </section>
+
+  <!-- 2. TERMS -->
+  <section id="terms">
+    <h2><span class="icon">🏷️</span> المصطلحات الأساسية</h2>
+    <table>
+      <tr><th>المصطلح</th><th>المعنى</th><th>في لغة C++</th></tr>
+      <tr><td><span class="kw">Superclass</span></td><td>الكلاس الأب (الرئيسي/العام)</td><td>Base class</td></tr>
+      <tr><td><span class="kw">Subclass</span></td><td>الكلاس الابن (الفرعي/المتخصص)</td><td>Derived class</td></tr>
+    </table>
+    <div class="note">
+      <span class="emoji">📌</span>
+      <div>
+        <strong>قواعد ذهبية:</strong>
+        <ul style="margin-top:8px; padding-right:20px;">
+          <li>كل <span class="kw">subclass</span> ممكن يصير <span class="kw">superclass</span> لكلاسات أخرى لاحقاً.</li>
+          <li>الكلاس الابن أكثر تخصصاً من الأب (يضيف خصائصه ودواله الخاصة).</li>
+          <li>في جافا: <strong>كل كلاس له أب مباشر واحد فقط</strong> لا غير.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. TYPES -->
+  <section id="types">
+    <h2><span class="icon">🔗</span> أنواع الوراثة</h2>
+    <h3>مباشرة وغير مباشرة</h3>
+    <p>• <strong>الأب المباشر (Direct):</strong> الكلاس الذي ترث منه صراحةً باستخدام <span class="kw">extends</span>.</p>
+    <p>• <strong>الأب غير المباشر (Indirect):</strong> أي كلاس أعلى في السلسلة الهرمية.</p>
+    <div class="note">
+      <span class="emoji">🌳</span>
+      <div>كل كلاس تكتبه في جافا يرث <strong>تلقائياً (implicitly)</strong> من الكلاس <span class="kw">java.lang.Object</span> — حتى لو لم تكتب <span class="kw">extends</span>.</div>
+    </div>
+    <h3>مفردة ومتعددة</h3>
+    <table>
+      <tr><th>النوع</th><th>الوصف</th><th>هل تدعمها جافا؟</th></tr>
+      <tr><td>Single Inheritance</td><td>الوراثة من أب مباشر واحد</td><td class="yes">✅ نعم</td></tr>
+      <tr><td>Multiple Inheritance</td><td>الوراثة من أكثر من أب مباشر</td><td class="no">❌ لا (بعكس C++)</td></tr>
+    </table>
+  </section>
+
+  <!-- 4. BENEFITS -->
+  <section id="benefits">
+    <h2><span class="icon">🌟</span> فوائد الوراثة</h2>
+    <p>① <strong>تقليل تكرار الكود (Less Redundancy):</strong> الخصائص المشتركة بين كل الأبناء تُكتب مرة واحدة في الأب.</p>
+    <p>② <strong>سهولة التعديل (Ease of Modification):</strong> لإضافة خاصية مثل <span class="kw">facebookId</span>، تضيفها في الأب فقط ويرثها الجميع.</p>
+    <p>③ <strong>القابلية للتوسع (Extensibility):</strong> دالة تعمل مع الكلاس الأب تعمل مع كل الأبناء، حتى لو أُنشئوا لاحقاً.</p>
+    <div class="tip">
+      <span class="emoji">🎯</span>
+      <div>مثال: دالة <span class="kw">sendInvitation(Employee e)</span> تقبل أي كلاس يرث من <span class="kw">Employee</span> (مثل Manager أو Programmer)، حتى لو عرّفته بعد كتابة الدالة. هذا ما يجعل الكود قابلاً للتوسع.</div>
+    </div>
+  </section>
+
+  <!-- 5. EXTENDS -->
+  <section id="extends">
+    <h2><span class="icon">🔑</span> الكلمة المفتاحية extends</h2>
+    <p>تُستخدم كلمة <span class="kw">extends</span> للدلالة على الوراثة:</p>
+    <pre><span class="label">Java</span><code><span class="c-key">class</span> <span class="c-type">Car</span> <span class="c-key">extends</span> <span class="c-type">Vehicle</span> { ... }   <span class="c-com">// Car ابن، Vehicle أب</span>
+
+<span class="c-key">class</span> <span class="c-type">Circle</span> <span class="c-key">extends</span> <span class="c-type">Shape</span> { ... }   <span class="c-com">// Circle ابن، Shape أب</span></code></pre>
+  </section>
+
+  <!-- 6. EXAMPLE -->
+  <section id="example">
+    <h2><span class="icon">🟦</span> مثال: Shape و Rectangle</h2>
+    <div class="diagram">
+      <div class="node root">
+        <div class="title">Object</div>
+        <div class="attrs">جذر كل الكلاسات</div>
+      </div>
+      <div class="arrow"><span class="lbl">extends (implicit)</span>↓</div>
+      <div class="node">
+        <div class="title">Shape (Superclass)</div>
+        <div class="attrs">color, name<br>setColor() · setName()<br>getColor() · getName() · toString()</div>
+      </div>
+      <div class="arrow"><span class="lbl">extends</span>↓</div>
+      <div class="node">
+        <div class="title">Rectangle (Subclass)</div>
+        <div class="attrs">color, name (موروثة) + length, width<br>كل دوال الأب + area() + toString()</div>
+      </div>
+    </div>
+    <div class="warning">
+      <span class="emoji">⚠️</span>
+      <div>الابن (Rectangle) يصل لكل ما هو <span class="kw">public</span> و <span class="kw">protected</span> في الأب. لكن الأب (Shape) <strong>لا يصل لأي شيء</strong> في الابن.</div>
+    </div>
+    <p><strong>إحصاء:</strong> الابن Rectangle عنده 4 خصائص (color, name, length, width) و 7 دوال (5 موروثة + area + toString).</p>
+  </section>
+
+  <!-- 7. CONSTRUCTORS -->
+  <section id="constructors">
+    <h2><span class="icon">🏗️</span> الوراثة والبناة (Constructors)</h2>
+    <p>خطوات الـ compiler عند إنشاء كائن:</p>
+    <p>① إنشاء كائن من <strong>الأب</strong> ← ينفّذ باني الأب فقط.</p>
+    <p>② إنشاء كائن من <strong>الابن</strong> ← يستدعي تلقائياً باني الأب <strong>بدون باراميترات (no-arg)</strong> أولاً، ثم باني الابن.</p>
+    <p>③ إذا الأب ما عنده باني بدون باراميترات ← الابن <strong>لازم يستدعي باني الأب صراحةً</strong> عبر <span class="kw">super</span>.</p>
+    <div class="warning">
+      <span class="emoji">🐞</span>
+      <div>عند إضافة باني بباراميترات للأب، يختفي الباني الافتراضي، فتظهر أخطاء في كل بناة الابن: <span class="kw">cannot find constructor Shape()</span>. الحل: استخدام <span class="kw">super</span>.</div>
+    </div>
+  </section>
+
+  <!-- 8. SUPER -->
+  <section id="super">
+    <h2><span class="icon">🔧</span> الكلمة المفتاحية super</h2>
+    <p>تشير إلى الكلاس الأب، وتُستخدم بثلاث طرق:</p>
+    <p>① استدعاء <strong>متغيرات</strong> الأب &nbsp;② استدعاء <strong>دوال</strong> الأب &nbsp;③ استدعاء <strong>بناة</strong> الأب</p>
+    <div class="note">
+      <span class="emoji">📍</span>
+      <div><span class="kw">super()</span> أو <span class="kw">super(parameters)</span> يجب أن تكون <strong>أول جملة</strong> في باني الابن.</div>
+    </div>
+    <h3>مثال على استدعاء دالة الأب (override لـ toString)</h3>
+    <pre><span class="label">Java</span><code><span class="c-key">public</span> <span class="c-type">String</span> <span class="c-fn">toString</span>() {
+    <span class="c-key">return</span> <span class="c-key">super</span>.<span class="c-fn">toString</span>() + <span class="c-str">" length=" + length + " width=" + width</span>;
+}</code></pre>
+    <p class="muted"><span class="kw">super.toString()</span> ينفّذ دالة الأب، وتُضاف النتيجة لباقي السلسلة.</p>
+    <div class="tip">
+      <span class="emoji">❓</span>
+      <div><strong>هل تُورّث البناة؟</strong> لا! البناة لا تُورّث، بل تُستدعى صراحةً عبر <span class="kw">super</span> أو تلقائياً (الباني بدون باراميترات).</div>
+    </div>
+  </section>
+
+  <!-- 9. CHAINING -->
+  <section id="chaining">
+    <h2><span class="icon">⛓️</span> تسلسل البناة (Constructor Chaining)</h2>
+    <pre><span class="label">Java</span><code><span class="c-key">class</span> <span class="c-type">Point</span> {
+    <span class="c-fn">Point</span>() { <span class="c-type">System</span>.out.<span class="c-fn">print</span>(<span class="c-str">"Point Constructor ==> "</span>); }
+}
+<span class="c-key">class</span> <span class="c-type">Circle</span> <span class="c-key">extends</span> <span class="c-type">Point</span> {
+    <span class="c-key">public</span> <span class="c-fn">Circle</span>() { <span class="c-type">System</span>.out.<span class="c-fn">print</span>(<span class="c-str">"Circle Constructor ==> "</span>); }
+}
+<span class="c-key">class</span> <span class="c-type">Cylinder</span> <span class="c-key">extends</span> <span class="c-type">Circle</span> {
+    <span class="c-key">public</span> <span class="c-fn">Cylinder</span>() { <span class="c-type">System</span>.out.<span class="c-fn">print</span>(<span class="c-str">"Cylinder Constructor."</span>); }
+}
+<span class="c-key">class</span> <span class="c-type">Project</span> {
+    <span class="c-key">public static void</span> <span class="c-fn">main</span>(<span class="c-type">String</span>[] args) {
+        <span class="c-type">Cylinder</span> ob = <span class="c-key">new</span> <span class="c-fn">Cylinder</span>();
+    }
+}</code></pre>
+    <pre class="output"><span class="label">Output</span><code>Point Constructor ==> Circle Constructor ==> Cylinder Constructor.</code></pre>
+    <div class="note">
+      <span class="emoji">📈</span>
+      <div><strong>لماذا هذا الترتيب؟</strong> إنشاء Cylinder يستدعي باني Circle، الذي يستدعي باني Point أولاً. فالتنفيذ يبدأ <strong>من أقدم أب نحو أحدث ابن</strong>.</div>
+    </div>
+  </section>
+
+  <!-- 10. PROTECTED -->
+  <section id="protected">
+    <h2><span class="icon">🛡️</span> معامل الوصول protected</h2>
+    <p>العنصر <span class="kw">protected</span> يمكن الوصول له من: أي كلاس في <strong>نفس الـ package</strong>، أو من <strong>الأبناء</strong> (حتى لو في package مختلف).</p>
+    <table>
+      <tr><th>المعامل</th><th>نفس الكلاس</th><th>نفس الـ package</th><th>الأبناء (package آخر)</th><th>الجميع</th></tr>
+      <tr><td><span class="kw">private</span></td><td class="yes">✅</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td></tr>
+      <tr><td><span class="kw">default</span></td><td class="yes">✅</td><td class="yes">✅</td><td class="no">❌</td><td class="no">❌</td></tr>
+      <tr><td><span class="kw">protected</span></td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅</td><td class="no">❌</td></tr>
+      <tr><td><span class="kw">public</span></td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅</td></tr>
+    </table>
+    <p class="muted">الترتيب من الأضعف للأقوى وصولاً: private → default → protected → public</p>
+  </section>
+
+  <!-- 11. OVERRIDE -->
+  <section id="override">
+    <h2><span class="icon">🔄</span> Overriding مقابل Overloading</h2>
+    <table>
+      <tr><th>الوجه</th><th>Overloading (التحميل الزائد)</th><th>Overriding (إعادة الكتابة)</th></tr>
+      <tr><td>المكان</td><td>دالتان بنفس الاسم في <strong>نفس الكلاس</strong></td><td>دالة بنفس الاسم في <strong>الأب والابن</strong></td></tr>
+      <tr><td>الباراميترات</td><td>مختلفة (عدد/نوع/ترتيب)</td><td>نفسها تماماً (نفس البصمة)</td></tr>
+      <tr><td>المثال</td><td>البناة (Constructors)</td><td>الدالة toString()</td></tr>
+      <tr><td>النوع</td><td>تعدد أشكال ساكن (Static)</td><td>تعدد أشكال ديناميكي (Dynamic)</td></tr>
+    </table>
+    <div class="tip">
+      <span class="emoji">🧠</span>
+      <div><strong>للحفظ:</strong> Override = نفس البصمة، كلاسات مختلفة. Overload = نفس الاسم، بصمة مختلفة، نفس الكلاس.</div>
+    </div>
+  </section>
+
+  <!-- 12. OBJECT -->
+  <section id="object">
+    <h2><span class="icon">🌳</span> كلاس Object ودواله</h2>
+    <p>كل كلاس في جافا ينحدر من <span class="kw">java.lang.Object</span>، وهو <strong>جذر شجرة الوراثة</strong>.</p>
+    <pre><span class="label">Java</span><code><span class="c-key">public class</span> <span class="c-type">Circle</span> { ... }
+<span class="c-com">// يكافئ تماماً:</span>
+<span class="c-key">public class</span> <span class="c-type">Circle</span> <span class="c-key">extends</span> <span class="c-type">Object</span> { ... }</code></pre>
+
+    <h3>📝 دالة toString()</h3>
+    <p>ترجع <strong>تمثيلاً نصياً</strong> للكائن. السلوك الافتراضي يطبع <span class="kw">اسم_الكلاس@رقم_hex</span> مثل <span class="kw">Loan@15037e5</span> (غير مفيد) — لذلك يُنصح بعمل override.</p>
+
+    <h3>⚖️ دالة equals()</h3>
+    <p>تقارن <strong>محتوى</strong> كائنين. التطبيق الافتراضي يقارن المراجع فقط:</p>
+    <pre><span class="label">Java</span><code><span class="c-com">// التطبيق الافتراضي في كلاس Object</span>
+<span class="c-key">public boolean</span> <span class="c-fn">equals</span>(<span class="c-type">Object</span> obj) {
+    <span class="c-key">return this</span> == obj;
+}
+
+<span class="c-com">// مثال على override في Rectangle</span>
+<span class="c-key">public boolean</span> <span class="c-fn">equals</span>(<span class="c-type">Rectangle</span> obj) {
+    <span class="c-key">return</span> (<span class="c-key">this</span>.width == obj.width) && (<span class="c-key">this</span>.length == obj.length);
+}</code></pre>
+    <div class="note">
+      <span class="emoji">🔍</span>
+      <div><strong>الفرق بين == و equals:</strong><br>
+        • <span class="kw">==</span> يقارن القيم الأولية أو يفحص إن كان الكائنان لهما نفس <strong>المرجع</strong> (نفس العنوان).<br>
+        • <span class="kw">equals</span> يفحص إن كان لهما نفس <strong>المحتوى</strong> (عند عمل override).<br>
+        • <span class="kw">==</span> أقوى لأنه يفحص نفس الكائن بالضبط.</div>
+    </div>
+  </section>
+
+  <!-- 13. FINAL -->
+  <section id="final">
+    <h2><span class="icon">🔒</span> معامل final</h2>
+    <table>
+      <tr><th>الاستخدام</th><th>المعنى</th></tr>
+      <tr><td><span class="kw">final class</span></td><td>الكلاس لا يمكن وراثته (extend)</td></tr>
+      <tr><td><span class="kw">final</span> variable</td><td>متغير ثابت (constant)</td></tr>
+      <tr><td><span class="kw">final</span> method</td><td>الدالة لا يمكن عمل override لها</td></tr>
+    </table>
+    <pre><span class="label">Java</span><code><span class="c-key">final class</span> <span class="c-type">Math</span> { ... }              <span class="c-com">// لا يمكن أن يُورّث</span>
+<span class="c-key">final static</span> <span class="c-type">double</span> PI = <span class="c-num">3.14159</span>;   <span class="c-com">// ثابت</span></code></pre>
+  </section>
+
+  <!-- 14. EXERCISE -->
+  <section id="exercise">
+    <h2><span class="icon">📝</span> التمرين العملي</h2>
+    <p>صمّم تسلسل كلاسات لنمذجة أنواع المستندات:</p>
+    <h3>① الكلاس الأب: Document</h3>
+    <ul style="padding-right:22px;">
+      <li><span class="kw">protected String authorName</span></li>
+      <li><span class="kw">private int numberOfPages</span> و <span class="kw">private String classificationNo</span></li>
+      <li>باني بباراميترات + getters/setters</li>
+      <li>الشرط: <span class="kw">classificationNo</span> يبدأ بـ H أو S + 4 أرقام (مثل "H1345")، وإلا رسالة خطأ</li>
+      <li>دالة <span class="kw">display()</span> تطبع التفاصيل</li>
+    </ul>
+    <h3>② الكلاس الابن: Book</h3>
+    <ul style="padding-right:22px;">
+      <li><span class="kw">private String subject</span> و <span class="kw">private int yearOfPublishing</span></li>
+      <li>باني بباراميترات</li>
+      <li>override لدالة <span class="kw">display()</span></li>
+      <li>دالة <span class="kw">checkYear()</span> ترجع true إذا نُشر بعد/نفس سنة معينة</li>
+      <li>override لدالة <span class="kw">equals()</span> تقارن حسب subject</li>
+    </ul>
+    <h3>③ كلاس الاختبار (main)</h3>
+    <ul style="padding-right:22px;">
+      <li>أنشئ كتابين، نادِ display() لهما</li>
+      <li>قارنهما بـ equals واطبع "Equal" أو "Not Equal"</li>
+      <li>نادِ checkYear(2019) للاثنين واطبع النتيجة</li>
+    </ul>
+    <div class="tip">
+      <span class="emoji">💪</span>
+      <div>جرّب حل التمرين بنفسك أولاً! وإذا احتجت الحل الكامل بكود جافا، اطلبه وسأكتبه لك خطوة بخطوة.</div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div>🎓 شرح احترافي للوراثة في جافا — أُعدّ بصرياً لتسهيل الفهم</div>
+  <div class="ref">المرجع: Introduction to Java Programming · Daniel Liang · 12th Edition · Pearson 2019</div>
+  <div class="ref muted">Applied Science Private University — FIT</div>
+</footer>
+
+<script>
+  // smooth scroll for TOC links
+  document.querySelectorAll('.toc a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
